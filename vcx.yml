@@ -1,0 +1,22 @@
+--- 
+GENERATOR: 
+  PackageName: vcx
+  PackageDescription: "Package vcx-go provides Go bindings for LibVCX by Hyperledger Foundation"
+  Includes: ["vcx.h"]
+  FlagGroups:
+    - {name: LDFLAGS, flags: [-lvcx]}
+
+PARSER: 
+  SourcesPaths: ["vcx/vcx.h"]
+
+TRANSLATOR: 
+  PtrTips:
+    function:
+      - {target: "^cb", tips: [sref,sref,sref,sref]} # defaults
+  Rules: 
+    global: 
+      - {transform: lower}
+      - {action: accept, from: "^vcx_|^cb_"}
+      - {action: replace, from: "^vcx_", to: }
+      - {action: replace, from: "^cb_", to: "callback_" }
+      - {transform: export}
