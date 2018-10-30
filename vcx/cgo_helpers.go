@@ -287,8 +287,19 @@ func callback_error_code438ABEB5(cCmd_handle C.vcx_command_handle_t, cError_code
 
 var callback_error_code438ABEB5Func Callback_error_code
 
+// safeString ensures that the string is NULL-terminated, a NULL-terminated copy is created otherwise.
+func safeString(str string) string {
+	if len(str) > 0 && str[len(str)-1] != '\x00' {
+		str = str + "\x00"
+	} else if len(str) == 0 {
+		str = "\x00"
+	}
+	return str
+}
+
 // unpackPCharString represents the data from Go string as *C.char and avoids copying.
 func unpackPCharString(str string) (*C.char, *cgoAllocMap) {
+	str = safeString(str)
 	h := (*stringHeader)(unsafe.Pointer(&str))
-	return (*C.char)(h.Data), cgoAllocsUnknown
+	return (*C.char)(unsafe.Pointer(h.Data)), cgoAllocsUnknown
 }
